@@ -1,0 +1,38 @@
+version: "3.7"
+
+volumes:
+  mysql-data:
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    container_name: catsorriso-mysql
+    restart: unless-stopped
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=railsblit
+      - MYSQL_DATABASE=catsorriso
+      - MYSQL_USER=catsorriso
+      - MYSQL_PASSWORD=catsorriso
+
+  rails:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: rails s -p 3000 -b 0.0.0.0
+    volumes:
+      - .:/src    
+    stdin_open: true
+    tty: true
+    ports:
+      - 80:3000
+    environment:
+      RACK_ENV: development
+      RAILS_ENV: development
+    depends_on:
+      - mysql
+
